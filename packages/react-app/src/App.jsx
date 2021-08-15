@@ -19,7 +19,7 @@ import {
   useOnBlock,
   useUserSigner,
 } from "./hooks";
-import { Products, OwnerUI, Review } from "./views";
+import { Products, Review } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -178,6 +178,8 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
 
+  // Write with Owner
+
   // EXTERNAL CONTRACT EXAMPLE:
   //
   // If you want to bring in the mainnet DAI contract it would look like:
@@ -195,6 +197,7 @@ function App(props) {
 
   // keep track of a variable from the contract in the local React state:
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  const product_array = useContractReader(readContracts, "YourContract", "products");
 
   // 📟 Listen for broadcast events
   const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
@@ -379,14 +382,24 @@ function App(props) {
       {networkDisplay}
       <BrowserRouter>
         <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
+          {/* <Menu.Item key="/">
             <Link
               onClick={() => {
                 setRoute("/");
               }}
               to="/"
             >
-              YourContract
+              Template
+            </Link>
+          </Menu.Item> */}
+          <Menu.Item key="/products">
+            <Link
+              onClick={() => {
+                setRoute("/products");
+              }}
+              to="/products"
+            >
+              Products
             </Link>
           </Menu.Item>
           <Menu.Item key="/review">
@@ -397,26 +410,6 @@ function App(props) {
               to="/review"
             >
               User Reviews
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/ownerui">
-            <Link
-              onClick={() => {
-                setRoute("/ownerui");
-              }}
-              to="/ownerui"
-            >
-              Token Dashboard
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/products">
-            <Link
-              onClick={() => {
-                setRoute("/products");
-              }}
-              to="/products"
-            >
-              Products
             </Link>
           </Menu.Item>
         </Menu>
@@ -448,25 +441,10 @@ function App(props) {
               tx={tx}
               writeContracts={writeContracts}
               readContracts={readContracts}
-              purpose={purpose}
+              product_array={product_array}
               setPurposeEvents={setPurposeEvents}
               storeJson={storeJson}
               getJson={getJson}
-            />
-          </Route>
-          <Route path="/ownerui">
-            <OwnerUI
-              address={address}
-              userSigner={userSigner}
-              mainnetProvider={mainnetProvider}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
             />
           </Route>
           <Route path="/products">
