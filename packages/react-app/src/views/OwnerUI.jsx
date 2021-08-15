@@ -18,24 +18,22 @@ export default function OwnerUI({
 	readContracts,
 	writeContracts,
 }) {
-	// form constants to provide user tokens
-	const [userAdd, setuserAdd] = useState('');
-	const [productID, setproductID] = useState('');
-	
 	// used for viewing tokens
-	const [productID2, setproductID2] = useState('');
 	const [tokenNum, settokenNum] = useState('');
 
 	return (
 		<div>
 			<div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64, marginBottom: 64 }}>
 				<h2>🟡 View number of tokens 🟡</h2>
-				<h3> { tokenNum } token(s) for product { productID2 } </h3>
+				<h3> { tokenNum } token(s) available. </h3>
 				<div style={{ margin: 8 }}>
 					<Select 
 						placeholder="Enter Product ID"
-						onSelect={(value) => {
-							setproductID2(value);
+						onSelect={async (value) => {
+							writeContracts.YourContract.displayTokens(address, value)
+							.then(result => {
+								settokenNum(result.toNumber());
+							});
 						}}
 					>
 						<Option value="1">Earthen Bottle</Option>
@@ -43,17 +41,6 @@ export default function OwnerUI({
 						<Option value="3">Focus Paper Refill</Option>
 						<Option value="4">Machined Mechanical Pencil</Option>
 					</Select>
-					<Button
-						style={{ marginTop: 8 }}
-						onClick={async () => {
-							writeContracts.YourContract.displayTokens(address, productID2)
-							.then(result => {
-								settokenNum(result.toNumber());
-							});
-						}}
-					>
-						Enter
-					</Button>
 				</div>
 			</div>
 		</div>

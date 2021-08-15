@@ -1,8 +1,10 @@
 import { SyncOutlined } from "@ant-design/icons";
 import { utils } from "ethers";
-import { Button, Card, DatePicker, Divider, Input, List, Progress, Slider, Spin, Switch } from "antd";
+import { Button, Card, DatePicker, Divider, Input, List, Progress, Slider, Spin, Switch, Select } from "antd";
 import React, { useState } from "react";
 import { Address, Balance } from "../components";
+
+const { Option } = Select;
 
 export default function Review({
 	purpose,
@@ -28,18 +30,31 @@ export default function Review({
 	const [reviewIndex, setreviewIndex] = useState('');
 	const [reviewHash, setreviewHash] = useState('');
 
+	// used for viewing tokens
+	const [tokenNum, settokenNum] = useState('');
+
 	return (
 		<div>
 			<div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64, marginBottom: 64 }}>
 				<h2> Enter Product Reviews 📝 </h2>
 				<h4>(Only users with product review tokens 🟡 are able to enter reviews)</h4>
 				<div style={{ margin: 8 }}>
-					<Input 
+					<Select 
 						placeholder="Enter Product ID"
-						onChange={e => {
-							setproductID(e.target.value);
+						onSelect={async (value) => {
+							await writeContracts.YourContract.displayTokens(address, value)
+							.then(result => {
+								settokenNum(result.toNumber());
+								setproductID(value);
+							});
 						}}
-					/>
+					>
+						<Option value="1">Earthen Bottle</Option>
+						<Option value="2">Nomad Tumbler</Option>
+						<Option value="3">Focus Paper Refill</Option>
+						<Option value="4">Machined Mechanical Pencil</Option>
+					</Select>
+					<h3> { tokenNum } token(s) available. </h3>
 					<Input
 						placeholder="Enter Review Comment"
 						onChange={e => {
@@ -54,7 +69,12 @@ export default function Review({
 								review: review,
 							}
 							const cid = storeJson(reviewJson, "review.json");
-							const result = tx(writeContracts.YourContract.writeReview(productID, cid));
+							const result = tx(writeContracts.YourContract.writeReview(productID, cid))
+							.then(() => {
+								if (tokenNum > 0) {
+									settokenNum(tokenNum - 1);
+								}
+							});
 						}}
 					>
 						Enter Review
@@ -93,16 +113,20 @@ export default function Review({
 						style={{ marginTop: 8 }}
 						onClick={async () => {
 							let productReviewHashes;
-							await writeContracts.YourContract.displayMultipleReviewsProduct(200)
+							let productReviewJson = [];
+							await writeContracts.YourContract.displayMultipleReviewsProduct(2)
 								.then(result => {
 									productReviewHashes = result;
 								});
-							await productReviewHashes.forEach(hash => {
-								console.log(getJson(hash));
+							await productReviewHashes.forEach (async hash => {
+								await getJson(hash).then(jsonData => {
+									console.log(jsonData);
+								});
+								// productReviewJson.push(jsonData);
 							});
 						}}
 					>
-						Test
+						View Review
 					</Button>
 				</div>
 			</div>

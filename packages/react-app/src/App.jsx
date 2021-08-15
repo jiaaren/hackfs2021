@@ -19,7 +19,7 @@ import {
   useOnBlock,
   useUserSigner,
 } from "./hooks";
-import { Products, OwnerUI, Review } from "./views";
+import { Products, Review } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -382,14 +382,24 @@ function App(props) {
       {networkDisplay}
       <BrowserRouter>
         <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
+          {/* <Menu.Item key="/">
             <Link
               onClick={() => {
                 setRoute("/");
               }}
               to="/"
             >
-              YourContract
+              Template
+            </Link>
+          </Menu.Item> */}
+          <Menu.Item key="/products">
+            <Link
+              onClick={() => {
+                setRoute("/products");
+              }}
+              to="/products"
+            >
+              Products
             </Link>
           </Menu.Item>
           <Menu.Item key="/review">
@@ -400,26 +410,6 @@ function App(props) {
               to="/review"
             >
               User Reviews
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/ownerui">
-            <Link
-              onClick={() => {
-                setRoute("/ownerui");
-              }}
-              to="/ownerui"
-            >
-              Token Dashboard
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/products">
-            <Link
-              onClick={() => {
-                setRoute("/products");
-              }}
-              to="/products"
-            >
-              Products
             </Link>
           </Menu.Item>
         </Menu>
@@ -455,21 +445,6 @@ function App(props) {
               setPurposeEvents={setPurposeEvents}
               storeJson={storeJson}
               getJson={getJson}
-            />
-          </Route>
-          <Route path="/ownerui">
-            <OwnerUI
-              address={address}
-              userSigner={userSigner}
-              mainnetProvider={mainnetProvider}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              price={price}
-              tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
             />
           </Route>
           <Route path="/products">
